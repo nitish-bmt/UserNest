@@ -1,16 +1,19 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "src/entity/user.entity";
+import { UserEntity } from "src/user/entity/user.entity";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
-import { ConfigModule } from "@nestjs/config";
+import { DataSource } from "typeorm";
+import { UserRepository } from "./repository/user.repository";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserEntity, UserRepository]),
   ],
-  providers: [UsersService],
+  providers: [UsersService, UserRepository],
   controllers: [UsersController],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, UsersService],
 })
-export class UsersModule {}
+export class UsersModule {
+  constructor(private dataSource: DataSource){}
+}
