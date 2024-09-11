@@ -6,15 +6,25 @@ import {IsAlphanumeric, IsEmail, IsNotEmpty} from "class-validator";
 export class UserDto{
 
   @IsNotEmpty()
-  name: string;
-  
+  firstName: string;
+
+  @IsNotEmpty()
+  lastName: string;
+
   @IsNotEmpty()
   username: string;
-  
+
+  @IsNotEmpty()
+  pass: string;
+
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
-  pass: string;
+  contact: string;
+
+  // @IsNotEmpty()
+  // createdAt: Date;
+
+  // deletedAt: Date|null;
 }

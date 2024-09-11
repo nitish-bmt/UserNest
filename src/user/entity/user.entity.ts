@@ -1,9 +1,9 @@
-import { Column, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 // default is
 // varchar(255) for strings
 // and integer for number
-export class UserEntity{
+@Entity()
+export class User{
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -40,17 +40,17 @@ export class UserEntity{
   @Column()
   contact: string;
 
-  @Column({
-    type: 'timestamp',
-    nullable: false,
-    default: ()=> 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
+  // @Column({
+  //   type: 'timestamp',
+  //   nullable: false,
+  //   default: ()=> 'CURRENT_TIMESTAMP',
+  // })
+  // createdAt: Date;
 
-  @Column({
-    type:'timestamp', 
-    nullable: true,
-    default: null,
-  })
-  deletedAt: Date|null;
+  // @Column({
+  //   type:'timestamp', 
+  //   nullable: true,
+  //   default: null,
+  // })
+  // deletedAt: Date|null;
 }
