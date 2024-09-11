@@ -1,31 +1,36 @@
 import { Injectable } from "@nestjs/common";
-import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
-import { constrainedMemory } from "process";
-import { UserEntity } from "src/user/entity/user.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/user/entity/user.entity";
 
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { UserDto } from "../dto/user.dto";
 import { plainToInstance } from "class-transformer";
 import { dbFailure } from "src/constants/failureConstants";
 import { userCreationSuccess } from "src/constants/successConstants";
 
 @Injectable()
-export class UserRepository extends Repository<UserEntity>{
+export class UserRepository extends Repository<User>{
 
-  constructor( private dataSource: DataSource){
-    super(UserEntity, dataSource.createEntityManager());
+  constructor( 
+    @InjectRepository(User) 
+    private userRepository:Repository<User>
+  ){
+    super(userRepository.target,
+       userRepository.manager,
+       userRepository.queryRunner
+    );
   }
 
-  async isUsernameRegistered(username){
-    const result = await this.findBy({
+  async isUsernameRegistered(username: string){
+    const result = await this.userRepository.findBy({
       username: username,
     });
 
     return (result!=null);
   }
 
-  async isEmailRegistered(email){
-    const result = await this.findBy({
+  async isEmailRegistered(email: string){
+    const result = await this.userRepository.findBy({
       email: email,
     });
 
@@ -39,14 +44,16 @@ export class UserRepository extends Repository<UserEntity>{
   }
 
   async getUserList(): Promise<UserDto[]>{
-    const result = await this.find();
+    const result = await this.userRepository.find();
     const users: UserDto[] = result.map((usr)=>plainToInstance(UserDto, usr));
     return users;
   }
 
   async addUser(newUserData: UserDto){
     try{
-      await this.insert(newUserData);
+      const usr = await this.userRepository.create(newUserData);
+      console.log("hhhh", usr);
+      await this.userRepository.save(usr);
     }
     catch(error){
       console.log(error);
@@ -54,7 +61,7 @@ export class UserRepository extends Repository<UserEntity>{
         response: dbFailure.DB_WRITE_FAILURE,
       })
     }
-
+    
     return({
       response: userCreationSuccess.SUCCESS,
     });
