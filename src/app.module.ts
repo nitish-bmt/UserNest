@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
-import { HealthcheckService } from './healthcheck/healthcheck.service';
-import { HealthcheckController } from './healthcheck/healthcheck.controller';
 import { UsersModule } from './user/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { UsersService } from './user/users.service';
-import { UsersController } from './user/users.controller';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -27,10 +25,16 @@ import { UsersController } from './user/users.controller';
     }),     
     HealthcheckModule,
     UsersModule,
+    AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
   ],
-  controllers: [AppController, HealthcheckController, UsersController],
-  providers: [AppService, HealthcheckService, UsersService],
+  providers:[
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    JwtStrategy
+  ]
 })
 export class AppModule {
 

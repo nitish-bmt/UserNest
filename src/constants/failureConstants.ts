@@ -12,3 +12,16 @@ export enum userCreationFailure{
   EMAIL_ALREADY_REGISTERED = "Email already registered. Try with another email.",
   USERNAME_ALREADY_TAKEN = "Username already taken. Try with another username.",
 }
+
+export enum userFailure{
+  USER_NOT_FOUND = "User does not exist",
+}
+
+export enum authFailure{
+  FAILURE = "Could not login",
+  INVALID_CREDENTIALS = "username and password do not match",
+}
+
+export enum authSuccess{
+  SUCCESS = "Logged in successfully"
+}

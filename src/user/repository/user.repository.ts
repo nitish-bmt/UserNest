@@ -7,26 +7,29 @@ import { UserDto } from "../dto/user.dto";
 import { plainToInstance } from "class-transformer";
 import { dbFailure } from "src/constants/failureConstants";
 import { userCreationSuccess } from "src/constants/successConstants";
+import * as bcrypt from "bcrypt";
+import { UpdateUserDto } from "../dto/update-user.dto";
 
 @Injectable()
 export class UserRepository extends Repository<User>{
 
   constructor( 
     @InjectRepository(User) 
-    private userRepository:Repository<User>
+    private userRepository:Repository<User>,
   ){
-    super(userRepository.target,
-       userRepository.manager,
-       userRepository.queryRunner
+    super(
+      userRepository.target,
+      userRepository.manager,
+      userRepository.queryRunner
     );
   }
 
-  async isUsernameRegistered(username: string){
-    const result = await this.userRepository.findBy({
+  async isUserRegistered(username: string){
+    const result = await this.userRepository.findOneBy({
       username: username,
     });
 
-    return (result!=null);
+    return result
   }
 
   async isEmailRegistered(email: string){
@@ -38,7 +41,7 @@ export class UserRepository extends Repository<User>{
   }
 
   async userExists(username: string): Promise<string>{
-    if(this.isUsernameRegistered(username)) return `user: ${username} exists.`;
+    if(this.isUserRegistered(username)) return `user: ${username} exists.`;
 
     return `user: ${username} doesn't exist.`;
   }
@@ -51,8 +54,7 @@ export class UserRepository extends Repository<User>{
 
   async addUser(newUserData: UserDto){
     try{
-      const usr = await this.userRepository.create(newUserData);
-      console.log("hhhh", usr);
+      const usr = this.userRepository.create(newUserData);
       await this.userRepository.save(usr);
     }
     catch(error){
@@ -65,6 +67,38 @@ export class UserRepository extends Repository<User>{
     return({
       response: userCreationSuccess.SUCCESS,
     });
+  }
+
+  // async findByUsername(username: string): Promise<User | null> {
+  //   return this.userRepository.findOne({ where: { username } });
+  // }
+
+  async authenticateUser(username: string, password: string){
+    const user = await this.isUserRegistered(username);
+    if (!user) {
+      return false;
+    }
+    return bcrypt.compare(password, user.pass);
+  }
+
+  async updateUser(username: string, updateData: UpdateUserDto){
+    const user = await this.isUserRegistered(username);
+    if (!user) {
+      return null;
+    }
+    // if (updateData.pass) {
+    //   updateData.pass = await bcrypt.hash(updateData.pass, process.env.SALT_ROUNDS);
+    // }
+    Object.assign(user, updateData);
+    return this.userRepository.save(user);
+  }
+
+  async deleteUser(username: string){
+    const user = await this.isUserRegistered(username);
+    if (!user) {
+      return null;
+    }
+    return this.userRepository.remove(user);
   }
  
 }
