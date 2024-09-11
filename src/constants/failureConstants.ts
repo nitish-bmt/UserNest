@@ -5,6 +5,7 @@ export enum dbFailure{
   DB_SEARCH_FAILURE = "COULD NOT FIND DB",
   DB_ITEM_NOT_FOUND = "ITEM NOT FOUND IN DB",
   EMPTY_DB_STRING = "RECEIVED EMPTY DB STRING ",
+  DB_ITEM_NOT_DELETED = "COULD NOT DELETE THE ITEM"
 }
 
 export enum userCreationFailure{
@@ -15,6 +16,7 @@ export enum userCreationFailure{
 
 export enum userFailure{
   USER_NOT_FOUND = "User does not exist",
+  USER_NOT_DELETED = "COULD NOT DELETE THE USER"
 }
 
 export enum authFailure{

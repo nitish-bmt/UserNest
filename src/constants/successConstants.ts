@@ -6,6 +6,8 @@ export enum dbSuccess{
   DB_ITEM_NOT_FOUND = "ITEM FOUND IN DB",
 }
 
-export enum userCreationSuccess{
-  SUCCESS = "New user created successfully.",
+export enum userSuccess{
+  USER_CREATED = "New user created successfully.",
+  USER_FOUND = "User exists",
+  USER_DELETED = "DELETED THE USER"
 }

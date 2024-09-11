@@ -1,6 +1,6 @@
 // import { Prop } from "@nestjs/mongoose";
 // import { Exclude, Expose } from "class-transformer";
-import {IsAlphanumeric, IsEmail, IsNotEmpty} from "class-validator";
+import { IsEmail, IsNotEmpty} from "class-validator";
 
 // data transfer object
 export class UserDto{
@@ -23,8 +23,4 @@ export class UserDto{
 
   contact: string;
 
-  // @IsNotEmpty()
-  // createdAt: Date;
-
-  // deletedAt: Date|null;
 }

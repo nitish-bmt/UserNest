@@ -2,18 +2,16 @@ import {Injectable} from "@nestjs/common";
 import { UserDto } from "./dto/user.dto";
 import { UserRepository } from "./repository/user.repository";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { authFailure, dbFailure, userFailure } from "src/constants/failureConstants";
-import { LoginUserDto } from "./dto/login-user.dto";
+import { dbFailure, userFailure } from "src/constants/failureConstants";
 import { JwtService } from "@nestjs/jwt";
-import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
+import { userSuccess } from "src/constants/successConstants";
 
 @Injectable()
 export class UsersService {
   constructor(
     // @InjectRepository(UserRepository)
     private userRepository: UserRepository,
-    private jwtService: JwtService,
   ){}
 
   async showAllUsers(): Promise<UserDto[]>{
@@ -21,13 +19,11 @@ export class UsersService {
   }
 
   async checkUser(username: string){
-    const a = {
+    const usr= {
       username: username,
       available: await this.userRepository.userExists(username)
     }
-
-    console.log(a);
-    return a;
+    return usr;
   }
 
   async addNewUser(newUserData: UserDto){
@@ -51,46 +47,28 @@ export class UsersService {
     };
   }
 
-  async deleteUser(username: string) {
-    const deletedUser = await this.userRepository.deleteUser(username);
-    if (!deletedUser) {
-      return {
-        success: false,
-        message: userFailure.USER_NOT_FOUND,
-      };
-    }
 
-    return {
-      success: true,
-      message: 'User successfully deleted',
-    };
-  }
-
-  async authUser(userLogin: LoginUserDto) {
-    const user = await this.userRepository.isUserRegistered(userLogin.username);
-    
+  async deleteUser(username: string, userId: string) {
+    const user = await this.userRepository.isUserRegistered(username);
     if (!user) {
-      return {
-        success: false,
-        message: userFailure.USER_NOT_FOUND
-      };
+      return({
+        resp: dbFailure.DB_ITEM_NOT_DELETED,
+        message: dbFailure.DB_ITEM_NOT_FOUND,
+      });
     }
 
-    const isPasswordValid = await this.userRepository.authenticateUser(userLogin.username, userLogin.pass);
-    
-    if (!isPasswordValid) {
-      return {
-        success: false,
-        message: authFailure.INVALID_CREDENTIALS
-      };
+    try{
+      await this.userRepository.softDelete(userId);
+      return({
+        resp: userSuccess.USER_DELETED,
+      })
+    }
+    catch(error){
+      console.log(error);
     }
 
-    const payload = { username: user.username, sub: user.id };
-    const accessToken = this.jwtService.sign(payload);
-
-    return {
-      success: true,
-      accessToken
-    };
+    return({
+      resp: userFailure.USER_NOT_DELETED
+    })
   }
 }

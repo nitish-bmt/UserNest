@@ -1,27 +1,26 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/user/entity/user.entity";
-
 import { Repository } from "typeorm";
 import { UserDto } from "../dto/user.dto";
 import { plainToInstance } from "class-transformer";
 import { dbFailure } from "src/constants/failureConstants";
-import { userCreationSuccess } from "src/constants/successConstants";
 import * as bcrypt from "bcrypt";
 import { UpdateUserDto } from "../dto/update-user.dto";
+import { userSuccess } from "src/constants/successConstants";
 
 @Injectable()
-export class UserRepository{
+export class UserRepository extends Repository<User>{
 
   constructor( 
     @InjectRepository(User) 
-    private userRepository:Repository<User>,
+    private userRepository: Repository<User>
   ){
-    // super(
-    //   userRepository.target,
-    //   userRepository.manager,
-    //   userRepository.queryRunner
-    // );
+    super(
+      userRepository.target,
+      userRepository.manager,
+      userRepository.queryRunner,
+    );
   }
 
   async isUserRegistered(username: string){
@@ -31,6 +30,7 @@ export class UserRepository{
     return result
   }
 
+  // SoftDeleteQueryBuilder<User>
   async isEmailRegistered(email: string){
     const result = await this.userRepository.findBy({
       email: email,
@@ -64,7 +64,7 @@ export class UserRepository{
     }
     
     return({
-      response: userCreationSuccess.SUCCESS,
+      response: userSuccess.USER_CREATED,
     });
   }
 
@@ -87,13 +87,4 @@ export class UserRepository{
     Object.assign(user, updateData);
     return this.userRepository.save(user);
   }
-
-  async deleteUser(username: string){
-    const user = await this.isUserRegistered(username);
-    if (!user) {
-      return null;
-    }
-    return this.userRepository.remove(user);
-  }
- 
 }

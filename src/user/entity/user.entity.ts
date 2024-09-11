@@ -42,19 +42,9 @@ export class User{
   @Column()
   contact: string;
 
-  // @Column({
-  //   type: 'timestamp',
-  //   nullable: false,
-  //   default: ()=> 'CURRENT_TIMESTAMP',
-  // })
   @CreateDateColumn()
   createdAt: Date;
 
-  // @Column({
-  //   type:'timestamp', 
-  //   nullable: true,
-  //   default: null,
-  // })
   @DeleteDateColumn()
-  deletedAt: Date|null;
+  deletedAt?: Date;
 }

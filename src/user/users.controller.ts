@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Patch, Post} from "@nestjs/common";
 import { UserDto } from "./dto/user.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -24,7 +24,7 @@ export class UsersController {
     return await this.userService.showAllUsers();
   }
 
-  @Post("updateUser")
+  @Patch("updateUser")
   async updateUser(@Request() req){
     const dataToUpdate: UpdateUserDto = req.body;
     const {userId, username} = req.user;
@@ -34,5 +34,11 @@ export class UsersController {
   @Get(":username")
   async checkUser(@Param("username") username: string){
     this.userService.checkUser(username);
+  }
+
+  @Delete("deleteUser")
+  async deleteUser(@Request() req){
+    const {userId, username} = req.user;
+    return this.userService.deleteUser(username, userId);
   }
 } 
