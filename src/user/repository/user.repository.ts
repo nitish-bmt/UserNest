@@ -11,24 +11,23 @@ import * as bcrypt from "bcrypt";
 import { UpdateUserDto } from "../dto/update-user.dto";
 
 @Injectable()
-export class UserRepository extends Repository<User>{
+export class UserRepository{
 
   constructor( 
     @InjectRepository(User) 
     private userRepository:Repository<User>,
   ){
-    super(
-      userRepository.target,
-      userRepository.manager,
-      userRepository.queryRunner
-    );
+    // super(
+    //   userRepository.target,
+    //   userRepository.manager,
+    //   userRepository.queryRunner
+    // );
   }
 
   async isUserRegistered(username: string){
     const result = await this.userRepository.findOneBy({
       username: username,
     });
-
     return result
   }
 
@@ -68,10 +67,6 @@ export class UserRepository extends Repository<User>{
       response: userCreationSuccess.SUCCESS,
     });
   }
-
-  // async findByUsername(username: string): Promise<User | null> {
-  //   return this.userRepository.findOne({ where: { username } });
-  // }
 
   async authenticateUser(username: string, password: string){
     const user = await this.isUserRegistered(username);

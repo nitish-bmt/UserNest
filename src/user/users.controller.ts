@@ -1,8 +1,9 @@
-import {Body, Controller, Get, Param, Post, SerializeOptions} from "@nestjs/common";
+import {Body, Controller, Get, Param, Post} from "@nestjs/common";
 import { UserDto } from "./dto/user.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { Public } from "src/utils/customDecorator/user.decorator";
+import { Request } from "@nestjs/common";
 
 @Controller("users")
 export class UsersController {
@@ -24,12 +25,13 @@ export class UsersController {
   }
 
   @Post("updateUser")
-  async updateUser(@Body() dataToUpdate: UpdateUserDto){
-    return this.userService.updateUser('faheem',dataToUpdate);
+  async updateUser(@Request() req){
+    const dataToUpdate: UpdateUserDto = req.body;
+    const {userId, username} = req.user;
+    return this.userService.updateUser(username, dataToUpdate);
   }
 
   @Get(":username")
-  // checkUser(@Param("userId", ParseIntPipe) userId: string){
   async checkUser(@Param("username") username: string){
     this.userService.checkUser(username);
   }

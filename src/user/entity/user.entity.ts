@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 // default is
 // varchar(255) for strings
@@ -47,12 +47,14 @@ export class User{
   //   nullable: false,
   //   default: ()=> 'CURRENT_TIMESTAMP',
   // })
-  // createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
   // @Column({
   //   type:'timestamp', 
   //   nullable: true,
   //   default: null,
   // })
-  // deletedAt: Date|null;
+  @DeleteDateColumn()
+  deletedAt: Date|null;
 }

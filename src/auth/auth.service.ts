@@ -3,13 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { authFailure, authSuccess, userFailure } from 'src/constants/failureConstants';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
 import { UserRepository } from 'src/user/repository/user.repository';
-import { UsersService } from 'src/user/users.service';
 //   "pass": "123456abs@"
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
     private userRepository: UserRepository,
     private jwtService: JwtService,
   ) {}
