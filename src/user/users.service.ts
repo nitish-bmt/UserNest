@@ -1,10 +1,10 @@
 import {Injectable} from "@nestjs/common";
 import { UserRepository } from "./repository/user.repository";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { dbFailure, userFailure } from "src/constants/failureConstants";
+import { dbFailure, userFailure } from "../constants/failureConstants";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { userSuccess } from "src/constants/successConstants";
+import { userSuccess } from "../constants/successConstants";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { SafeTransferUserDto } from "./dto/share-user.dto";
 
@@ -54,14 +54,14 @@ export class UsersService {
     if (!user) {
       return({
         resp: dbFailure.DB_ITEM_NOT_DELETED,
-        message: dbFailure.DB_ITEM_NOT_FOUND,
+        message: dbFailure.DB_ITEM_NOT_FOUND
       });
     }
 
     try{
       await this.userRepository.softDelete(userId);
       return({
-        resp: userSuccess.USER_DELETED,
+        resp: userSuccess.USER_DELETED
       })
     }
     catch(error){

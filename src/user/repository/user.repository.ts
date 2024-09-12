@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/user/entity/user.entity";
+import { User } from "../entity/user.entity";
 import { Repository } from "typeorm";
 import { plainToInstance } from "class-transformer";
-import { dbFailure } from "src/constants/failureConstants";
+import { dbFailure } from "../../constants/failureConstants";
 import * as bcrypt from "bcrypt";
 import { UpdateUserDto } from "../dto/update-user.dto";
-import { userSuccess } from "src/constants/successConstants";
+import { userSuccess } from "../../constants/successConstants";
 import { SafeTransferUserDto } from "../dto/share-user.dto";
 import { CreateUserDto } from "../dto/create-user.dto";
 
@@ -43,7 +43,7 @@ export class UserRepository extends Repository<User>{
   async userExists(username: string): Promise<string>{
     if(this.isUserRegistered(username)) return `user: ${username} exists.`;
 
-    return `user: ${username} doesn't exist.`;
+    return `user: ${username} does not exist.`;
   }
 
   async getUserList(): Promise<SafeTransferUserDto[]>{

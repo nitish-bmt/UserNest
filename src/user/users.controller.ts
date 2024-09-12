@@ -1,7 +1,7 @@
 import {Body, Controller, Delete, Get, Param, Patch, Post} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { Public } from "src/utils/customDecorator/user.decorator";
+import { Public } from "../utils/customDecorator/user.decorator";
 import { Request } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 
