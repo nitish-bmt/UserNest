@@ -2,12 +2,13 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/user/entity/user.entity";
 import { Repository } from "typeorm";
-import { UserDto } from "../dto/user.dto";
 import { plainToInstance } from "class-transformer";
 import { dbFailure } from "src/constants/failureConstants";
 import * as bcrypt from "bcrypt";
 import { UpdateUserDto } from "../dto/update-user.dto";
 import { userSuccess } from "src/constants/successConstants";
+import { SafeTransferUserDto } from "../dto/share-user.dto";
+import { CreateUserDto } from "../dto/create-user.dto";
 
 @Injectable()
 export class UserRepository extends Repository<User>{
@@ -45,13 +46,13 @@ export class UserRepository extends Repository<User>{
     return `user: ${username} doesn't exist.`;
   }
 
-  async getUserList(): Promise<UserDto[]>{
+  async getUserList(): Promise<SafeTransferUserDto[]>{
     const result = await this.userRepository.find();
-    const users: UserDto[] = result.map((usr)=>plainToInstance(UserDto, usr));
+    const users: SafeTransferUserDto[] = result.map((usr)=>plainToInstance(SafeTransferUserDto, usr));
     return users;
   }
 
-  async addUser(newUserData: UserDto){
+  async addUser(newUserData: CreateUserDto){
     try{
       const usr = this.userRepository.create(newUserData);
       await this.userRepository.save(usr);

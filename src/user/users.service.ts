@@ -1,11 +1,12 @@
 import {Injectable} from "@nestjs/common";
-import { UserDto } from "./dto/user.dto";
 import { UserRepository } from "./repository/user.repository";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { dbFailure, userFailure } from "src/constants/failureConstants";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { userSuccess } from "src/constants/successConstants";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { SafeTransferUserDto } from "./dto/share-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -14,7 +15,7 @@ export class UsersService {
     private userRepository: UserRepository,
   ){}
 
-  async showAllUsers(): Promise<UserDto[]>{
+  async showAllUsers(): Promise<SafeTransferUserDto[]>{
     return (await this.userRepository.getUserList());
   }
 
@@ -26,7 +27,7 @@ export class UsersService {
     return usr;
   }
 
-  async addNewUser(newUserData: UserDto){
+  async addNewUser(newUserData: CreateUserDto){
     console.log(newUserData);
     newUserData.pass = await bcrypt.hash(newUserData.pass, Number(process.env.SALT_ROUNDS));
     return (await this.userRepository.addUser(newUserData));

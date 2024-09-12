@@ -1,9 +1,9 @@
 import {Body, Controller, Delete, Get, Param, Patch, Post} from "@nestjs/common";
-import { UserDto } from "./dto/user.dto";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { Public } from "src/utils/customDecorator/user.decorator";
 import { Request } from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
 
 @Controller("users")
 export class UsersController {
@@ -15,7 +15,7 @@ export class UsersController {
   
   @Public()
   @Post("addUser")
-  async addNewUser(@Body() newUserData: UserDto){
+  async addNewUser(@Body() newUserData: CreateUserDto){
     return this.userService.addNewUser(newUserData);
   }
   
