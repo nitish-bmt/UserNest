@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "src/user/entity/user.entity";
+import { User } from "../user/entity/user.entity";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { DataSource } from "typeorm";
 import { UserRepository } from "./repository/user.repository";
-import { AuthService } from "src/auth/auth.service";
+import { AuthService } from "../auth/auth.service";
 import { JwtService } from "@nestjs/jwt";
 
 @Module({
@@ -13,9 +13,9 @@ import { JwtService } from "@nestjs/jwt";
     TypeOrmModule.forFeature([User, UserRepository]),
     // AuthService
   ],
-  providers: [UsersService, UserRepository, AuthService, JwtService],
+  providers: [UsersService, UserRepository],
   controllers: [UsersController],
-  exports: [TypeOrmModule, UsersService, UserRepository],
+  exports: [TypeOrmModule, UserRepository],
 })
 export class UsersModule {
   constructor(private dataSource: DataSource){}

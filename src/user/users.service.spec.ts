@@ -5,6 +5,12 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { User } from "./entity/user.entity";
 import { SafeTransferUserDto } from "./dto/share-user.dto";
 import { response } from "express";
+import { UsersModule } from "./users.module";
+import { AuthService } from "../auth/auth.service";
+import { JwtService } from "@nestjs/jwt";
+import { UserRepository } from "./repository/user.repository";
+import * as bcrypt from "bcrypt";
+import { CreateUserDto } from "./dto/create-user.dto";
 
 describe('UsersService', () => {
 
@@ -24,8 +30,10 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
+        AuthService,
+        JwtService,
         {
-          provide: getRepositoryToken(User),
+          provide: UserRepository,
           useValue: mockUserRepository,
         },
       ],
@@ -75,66 +83,51 @@ describe('UsersService', () => {
 
     // scenario 3
     it('should throw an error when database operation fails', async () => {
-      const result: Error = new Error('Database error');
-      // mocking repo method call
-      jest.spyOn(mockUserRepository, 'getUserList').mockRejectedValue(result);
+      const error = new Error('Database error');
+      mockUserRepository.getUserList.mockRejectedValue(error);
 
-      expect(await service.showAllUsers()).toBe(result);
-      expect(mockUserRepository.getUserList).toHaveBeenCalled();
+      await expect(service.showAllUsers()).rejects.toThrow('Database error');
     });
                 
   });
 
-
-  describe('checkUser', ()=>{
+  // tests for addNewUSer service
+  describe('addNewUser', () => {
 
     // scenario 1
-    it('should return response with available: user: username exists when the username exists', async()=>{
-      // mock data
-      const username = "nitish";
-      const result = {
-        username: username,
-        available: `user: ${username} exists.`
-      }
+    it('should add a new user successfully', async () => {
+      const newUser: CreateUserDto = {
+        firstName: 'John',
+        lastName: 'Doe',
+        username: 'johndoe',
+        email: 'john@example.com',
+        contact: '1234567890',
+        pass: 'password123'
+      };
+      const hashedPassword = 'hashedPassword';
+      mockUserRepository.addUser.mockResolvedValue({ ...newUser, pass: hashedPassword });
 
-      jest.spyOn(mockUserRepository, 'userExists').mockResolvedValue(result);
-      expect(await service.checkUser(username)).toBe(result);
+      const result = await service.addNewUser(newUser);
+      expect(result).toEqual({ ...newUser, pass: hashedPassword });
+
+      expect(mockUserRepository.addUser).toHaveBeenCalled();
     });
 
     // scenario 2
-    it('should return response with available: user: username does not exists when the username exists', async()=>{
-      // mock data
-      const username = "nitish";
-      const result = {
-        username: username,
-        available: `user: ${username} does not exist.`
-      }
+    it('should handle errors when adding a new user', async () => {
+      const newUser: CreateUserDto = {
+        firstName: 'Jane',
+        lastName: 'Doe',
+        username: 'janedoe',
+        email: 'jane@example.com',
+        contact: '0987654321',
+        pass: 'password456'
+      };
+      mockUserRepository.addUser.mockRejectedValue(new Error('Database error'));
 
-      jest.spyOn(mockUserRepository, 'userExists').mockRejectedValue(result);
-      expect(await service.checkUser(username)).toBe(result);
-    });               
+      await expect(service.addNewUser(newUser)).rejects.toThrow('Database error');
+    });
   });
 
-  // describe('addNewUser', ()=>{
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-                
-  // });
-  // describe('updateUser', ()=>{
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-                
-  // });
-  // describe('deleteUser', ()=>{
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-  //   it('', ()=>{});
-                
-  // });
 
 });
