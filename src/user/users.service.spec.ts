@@ -53,8 +53,8 @@ describe('UsersService', () => {
 
       // expected result
       const result: SafeTransferUserDto[] = [
-        { firstName: 'test', lastName: '1', username: 'test1', email: 'test1@example.com', contact: '1234567890', pass: 'xyz' },
-        { firstName: 'test', lastName: '2', username: 'test2', email: 'test2@example.com', contact: '1234567890', pass: 'xyz'},
+        { firstName: 'nitish', lastName: 'rawat', username: 'nitish', email: 'abhishek@binmile.com', contact: '1234567890', pass: 'abc' },
+        { firstName: 'abhishek', lastName: 'singh', username: 'abhishek', email: 'nitish@binmile.com', contact: '1234567890', pass: 'xyz'},
       ];
 
       // mocking repo method call
@@ -101,7 +101,7 @@ describe('UsersService', () => {
     it('should return response with available: true when the username exists', async () => {
 
       // mocking
-      const username = "existingUser";
+      const username = "nitish";
       const mockResult = `user: ${username} exists.`;
       mockUserRepository.userExists.mockResolvedValue(mockResult);
 
@@ -113,11 +113,11 @@ describe('UsersService', () => {
     });
 
     // test case 2
-    it('should return response with available: false when the username does not exist', async () => {
+    it('should return response with available: false when the username Rawats not exist', async () => {
 
       // mocking
       const username = "nonexistentUser";
-      const mockResult = `user: ${username} does not exist.`
+      const mockResult = `user: ${username} Rawats not exist.`
       mockUserRepository.userExists.mockResolvedValue(mockResult);
 
       const result = await service.checkUser(username);
@@ -149,10 +149,10 @@ describe('UsersService', () => {
 
       // mocking
       const newUser: CreateUserDto = {
-        firstName: 'John',
-        lastName: 'Doe',
-        username: 'johndoe',
-        email: 'john@example.com',
+        firstName: 'Nitish',
+        lastName: 'Rawat',
+        username: 'nitishrawat',
+        email: 'nitish@binmile.com',
         contact: '1234567890',
         pass: 'password123'
       };
@@ -173,11 +173,11 @@ describe('UsersService', () => {
 
       // mocking
       const newUser: CreateUserDto = {
-        firstName: 'Jane',
-        lastName: 'Doe',
-        username: 'janedoe',
-        email: 'jane@example.com',
-        contact: '0987654321',
+        firstName: 'Nitish',
+        lastName: 'Rawat',
+        username: 'nitishrawat',
+        email: 'nitish@binmile.com',
+        contact: '9876543221',
         pass: 'password456'
       };
       mockUserRepository.addUser.mockRejectedValue(new Error('Database error'));
@@ -194,9 +194,17 @@ describe('UsersService', () => {
     it('should update user successfully', async () => {
 
       // mocking
-      const username = 'johndoe';
-      const updateData: UpdateUserDto = { firstName: 'John Updated' };
-      const updatedUser = { username, ...updateData };
+      const user: SafeTransferUserDto = {
+        firstName: 'Nitis',
+        lastName: 'Rawat',
+        username: 'nitishrawat',
+        email: 'nitish@binmile.com',
+        contact: '9876543221',
+        pass: 'password456'
+      };
+      const username = 'nitishawat';
+      const updateData: UpdateUserDto = { firstName: 'Nitish' };
+      const updatedUser:SafeTransferUserDto = { ...updateData, ...user };
       mockUserRepository.updateUser.mockResolvedValue(updatedUser);
 
       const result = await service.updateUser(username, updateData);
@@ -210,7 +218,16 @@ describe('UsersService', () => {
 
       // mocking
       const username = 'nonexistent';
-      const updateData: UpdateUserDto = { firstName: 'John Updated' };
+      const user: SafeTransferUserDto = {
+        firstName: 'Nitis',
+        lastName: 'Rawat',
+        username: 'nonexistent',
+        email: 'nitish@binmile.com',
+        contact: '9876543221',
+        pass: 'password456'
+      };
+      const updateData: UpdateUserDto = { firstName: 'Nitish' };
+      const updatedUser:SafeTransferUserDto = { ...updateData, ...user };
       mockUserRepository.updateUser.mockResolvedValue(null);
 
       const result = await service.updateUser(username, updateData);
@@ -224,7 +241,16 @@ describe('UsersService', () => {
 
       // mocking
       const username = 'errorUser';
-      const updateData: UpdateUserDto = { firstName: 'Error User' };
+      const user: SafeTransferUserDto = {
+        firstName: 'Nitis',
+        lastName: 'Rawat',
+        username: 'erroruser',
+        email: 'nitish@binmile.com',
+        contact: '9876543221',
+        pass: 'password456'
+      };
+      const updateData: UpdateUserDto = { firstName: 'Nitish' };
+      const updatedUser:SafeTransferUserDto = { ...updateData, ...user };
       mockUserRepository.updateUser.mockRejectedValue(new Error('Database error'));
 
       // conforming the result
@@ -240,10 +266,9 @@ describe('UsersService', () => {
     it('should delete user successfully', async () => {
 
       // mocking
-      const username = 'johndoe';
+      const username = 'nitishrawat';
       const userId = '123';
       mockUserRepository.isUserRegistered.mockResolvedValue(true);
-      mockUserRepository.softDelete.mockResolvedValue(undefined);
 
       const result = await service.deleteUser(username, userId);
 
